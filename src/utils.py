@@ -10,6 +10,9 @@ import random
 from typing import List, Dict, Tuple, Any, Union
 
 
+def pair(t):
+    return t if isinstance(t, tuple) else (t, t)
+
 def set_random_seed(seed: int) -> None:
     """
     Set random seed for package random, numpy and pytorch

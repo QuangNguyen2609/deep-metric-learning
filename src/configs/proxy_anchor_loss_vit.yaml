@@ -1,0 +1,31 @@
+{
+    # Learning rate
+    "lr": 0.0001,
+    # Size of images to be resized before training
+    "image_size": 448,
+    # Size of output embedding vector
+    "embedding_size": 128,
+    # Patch size applying to images
+    "patch_size": 32,
+    # Last dimension after linear transformation
+    "dim": 1024,
+    # Number of Transformer blocks
+    "depth": 6,
+    # Number of heads in Multi-head Attention layer
+    "heads": 16,
+    # Dimension of the MLP (FeedForward) layer
+    "mlp_dim": 2048,
+    # Dropout rate
+    "dropout": 0.1,
+    # Embedding dropout rate.
+    "emb_dropout": 0.1,
+    # Batch size
+    "batch_size": 16,
+    # Margin factor
+    "margin": 0.1,
+    # Scaling factor
+    "alpha": 32,
+    # Whether to use pretrained weight on ImageNet or not
+    "pretrained": True,
+    "n_epochs": 30
+}

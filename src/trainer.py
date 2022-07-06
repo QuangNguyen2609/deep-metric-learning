@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
 import logging
@@ -37,11 +38,10 @@ def train_one_epoch(model: nn.Module,
     running_loss: float = 0.0
     running_fraction_hard_triplets: float = 0.0
 
-    for images, labels in train_loader:
+    for images, labels in tqdm(train_loader):
         # Increase number of iterations so far
         output_dict["current_iter"] += 1
         current_iter: int = output_dict["current_iter"]
-
         # Run validation
         if current_iter == 1 or (current_iter % validate_frequency == 0):
             metrics: Dict[str, Any] = calculate_all_metrics(model.module, test_loader, reference_loader, device)
@@ -62,7 +62,6 @@ def train_one_epoch(model: nn.Module,
                     checkpoint_dir,
                     metrics['mean_average_precision'],
                 )
-
         output_batch: Dict[str, Any] = train_one_batch(model, optimizer, loss_function, images, labels, device)
         running_loss += output_batch["loss"]
         running_fraction_hard_triplets += output_batch["fraction_hard_triplets"]
@@ -113,13 +112,12 @@ def train_one_batch(model: nn.Module,
                     ) -> Tuple[float, float]:
     model.train()
     optimizer.zero_grad()
-
+    print("START BATCH...")
     images: torch.Tensor = images.to(device, non_blocking=True)
     labels: torch.Tensor = labels.to(device, non_blocking=True)
 
     embeddings: torch.Tensor = model(images)
     loss, fraction_hard_triplets = loss_function(embeddings, labels)
-
     loss.backward()
     optimizer.step()
 

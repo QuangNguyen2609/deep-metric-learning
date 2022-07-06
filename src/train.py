@@ -4,6 +4,7 @@ import torchvision.transforms as T
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torch_optimizer import RAdam
+from torch.optim import Adam
 
 import argparse
 import logging
@@ -16,7 +17,9 @@ from pprint import pformat
 from typing import Dict, Any
 
 from src.trainer import train_one_epoch
-from src.models import Resnet50
+from src.models.resnet import Resnet50
+from src.models.vit import ViT
+from src.models.clip import build_clip
 from src.losses import TripletMarginLoss, ProxyNCALoss, ProxyAnchorLoss, SoftTripleLoss
 from src.samplers import PKSampler
 from src.dataset import Dataset, get_subset_from_dataset
@@ -56,16 +59,29 @@ def main(args: Dict[str, Any]):
 
 
     # Intialize model
-    model = nn.DataParallel(Resnet50(
-        embedding_size=config["embedding_size"],
-        pretrained=config["pretrained"]
-    ))
+    if args["model"] == "vit":
+        model = nn.DataParallel(ViT(embedding_size=config["embedding_size"],
+                                    image_size=config["image_size"],
+                                    patch_size=config["patch_size"],
+                                    dim=config["dim"],
+                                    depth=config["depth"],
+                                    heads=config["heads"],
+                                    mlp_dim=config["mlp_dim"],
+                                    dropout=config["dropout"],
+                                    emb_dropout=config["emb_dropout"]))
+    elif args["model"] == "clip":
+        pass
+    else:
+        model = nn.DataParallel(Resnet50(
+            embedding_size=config["embedding_size"],
+            pretrained=config["pretrained"]
+        ))
     model = model.to(device)
     logger.info(f"Initialized model: {model}")
 
 
     # Initialize optimizer
-    optimizer = RAdam(model.parameters(), lr=config["lr"])
+    optimizer = Adam(model.parameters(), lr=config["lr"])
     logger.info(f"Initialized optimizer: {optimizer}")
 
 
@@ -333,6 +349,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--random_seed", type=int, default=12345, help="Random seed"
+    )
+    parser.add_argument(
+        "--model", type=str, default="resnet", help="Model architecture options"
     )
 
     args: Dict[str, Any] = vars(parser.parse_args())
