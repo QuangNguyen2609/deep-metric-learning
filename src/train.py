@@ -19,6 +19,7 @@ from typing import Dict, Any
 from src.trainer import train_one_epoch
 from src.models.resnet import Resnet50
 from src.models.vit import ViT
+from src.models.SimpleVit import SimpleViT
 from src.models.clip import build_clip
 from src.losses import TripletMarginLoss, ProxyNCALoss, ProxyAnchorLoss, SoftTripleLoss
 from src.samplers import PKSampler
@@ -69,6 +70,14 @@ def main(args: Dict[str, Any]):
                                     mlp_dim=config["mlp_dim"],
                                     dropout=config["dropout"],
                                     emb_dropout=config["emb_dropout"]))
+    elif args["model"] == "svit":
+        model = nn.DataParallel(SimpleViT(image_size=config["image_size"],
+                                          patch_size=config["patch_size"],
+                                          embedding_size=config["embedding_size"],
+                                          dim=config["dim"],
+                                          depth=config["depth"],
+                                          heads=config["heads"],
+                                          mlp_dim=config["mlp_dim"]))
     elif args["model"] == "clip":
         pass
     else:

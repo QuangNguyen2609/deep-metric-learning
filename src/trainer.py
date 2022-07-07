@@ -118,6 +118,7 @@ def train_one_batch(model: nn.Module,
 
     embeddings: torch.Tensor = model(images)
     loss, fraction_hard_triplets = loss_function(embeddings, labels)
+    print(loss)
     loss.backward()
     optimizer.step()
 
