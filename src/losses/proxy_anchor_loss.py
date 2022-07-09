@@ -26,7 +26,6 @@ class ProxyAnchorLoss(nn.Module):
     def forward(self, embeddings: torch.Tensor, labels: torch.Tensor) -> Tuple[torch.Tensor, int]:
         # proxies shape: [n_classes * embedding_size]
         proxies: torch.Tensor = F.normalize(self.proxies, p=2, dim=1)
-
         # cosine_distances shape: [batch_size * n_classes]
         cosine_distances = F.linear(embeddings, proxies)
         # positive_exp shape: [batch_size * n_classes]

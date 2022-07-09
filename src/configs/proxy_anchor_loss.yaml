@@ -6,11 +6,11 @@
     # Size of output embedding vector
     "embedding_size": 128,
     # Batch size
-    "batch_size": 48,
+    "batch_size": 32,
     # Margin factor
     "margin": 0.1,
     # Scaling factor
     "alpha": 32,
     # Whether to use pretrained weight on ImageNet or not
-    "pretrained": True,
+    "pretrained": False,
 }

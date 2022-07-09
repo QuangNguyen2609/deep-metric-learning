@@ -112,13 +112,11 @@ def train_one_batch(model: nn.Module,
                     ) -> Tuple[float, float]:
     model.train()
     optimizer.zero_grad()
-    print("START BATCH...")
     images: torch.Tensor = images.to(device, non_blocking=True)
     labels: torch.Tensor = labels.to(device, non_blocking=True)
 
     embeddings: torch.Tensor = model(images)
     loss, fraction_hard_triplets = loss_function(embeddings, labels)
-    print(loss)
     loss.backward()
     optimizer.step()
 
