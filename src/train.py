@@ -268,6 +268,12 @@ def main(args: Dict[str, Any]):
             "normalized_mutual_information": 0.0,
         }
     }
+
+    # Using checkpoint to train
+    if args["using_checkpoint"] == True:
+        state_dict = torch.load(args["checkpoint_dir"])
+        model.load_state_dict(state_dict)
+    
     # Start training and testing
     logger.info("Start training...")
     for _ in range(1, args["n_epochs"] + 1):
@@ -348,7 +354,7 @@ if __name__ == "__main__":
         "--n_workers", type=int, default=8, help="Number of threads used for data loading"
     )
     parser.add_argument(
-        "--log_frequency", type=int, default=100, help="Number of iterations to print training logs"
+        "--log_frequency", type=int, default=500, help="Number of iterations to print training logs"
     )
     parser.add_argument(
         "--validate_frequency", type=int, default=1000, help="Number of iterations to run test"
@@ -362,7 +368,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model", type=str, default="resnet", help="Model architecture options"
     )
-
+    parser.add_argument(
+        "--using_checkpoint", type=bool, default=False, help="using checkpoint to train model instead of from scratch"
+    )
+    parser.add_argument(
+        "--checkpoint_dir", type=str, default="", help="Directory to checkpoint file .pth"
+    )
     args: Dict[str, Any] = vars(parser.parse_args())
     set_random_seed(args["random_seed"])
 
